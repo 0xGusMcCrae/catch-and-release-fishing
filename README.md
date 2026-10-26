@@ -8,7 +8,11 @@ Barbarian: leaping trout, leaping salmon, leaping sturgeon.
 
 Fly and bait: raw trout, raw salmon, raw pike, raw sardine, raw herring, raw rainbow fish, raw slimy eel, raw cave eel.
 
-Cooked fish, burnt fish, roe, and caviar are not included. A ground pile that contains one of these fish is not drawn, and that fish has no Take, Examine, or mouseover option, on any tile, including fish other players dropped.
+Leechfin: leechfin (big fishing net, Vampyrium). Item id `LEECHFIN` (33621).
+
+Cooked fish, burnt fish, roe, caviar, and blood sacs are not included. A ground pile that contains one of these fish is not drawn, and that fish has no Take, Examine, or mouseover option, on any tile, including fish other players dropped.
+
+The client draws a pile from three slots (bottom, middle, top). The first item on an empty tile is stored in the top slot, with the other two empty, and that is the model that used to flash. Hiding reads all three slots in the draw callback, which is the same check the Hide Ground Items plugin uses (vahnx, BSD 2-Clause, [plugin-hub commit 990adbe](https://github.com/runelite/plugin-hub/blob/master/plugins/hide-ground-items)). Menu entries for those fish are removed as they are added, so the hover line never offers them.
 
 ## Config
 
@@ -17,6 +21,7 @@ Cooked fish, burnt fish, roe, and caviar are not included. A ground pile that co
 - Hide fish on the ground
 - Barbarian fish
 - Fly and bait fish
+- Leechfin
 
 ## Build and run
 

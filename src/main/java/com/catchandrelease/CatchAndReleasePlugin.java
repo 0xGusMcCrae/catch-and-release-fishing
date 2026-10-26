@@ -8,7 +8,7 @@ import net.runelite.api.ItemLayer;
 import net.runelite.api.Menu;
 import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
-import net.runelite.api.Node;
+import net.runelite.api.Renderable;
 import net.runelite.api.Scene;
 import net.runelite.api.TileItem;
 import net.runelite.api.TileObject;
@@ -28,8 +28,8 @@ import net.runelite.client.util.Text;
 
 @PluginDescriptor(
 	name = "Catch and Release Fishing",
-	description = "Renames Drop to Release for barbarian and fly/bait fish, and hides those fish on the ground",
-	tags = {"fishing", "barbarian", "fly", "bait", "drop", "release"}
+	description = "Renames Drop to Release for barbarian, fly/bait, and leechfin, and hides those fish on the ground",
+	tags = {"fishing", "barbarian", "fly", "bait", "leechfin", "drop", "release"}
 )
 public class CatchAndReleasePlugin extends Plugin
 {
@@ -45,6 +45,12 @@ public class CatchAndReleasePlugin extends Plugin
 	private final RenderCallback renderCallback = new RenderCallback()
 	{
 		@Override
+		public boolean addEntity(Renderable renderable, boolean drawingUi)
+		{
+			return shouldDrawRenderable(renderable);
+		}
+
+		@Override
 		public boolean drawObject(Scene scene, TileObject object)
 		{
 			return shouldDrawObject(object);
@@ -54,7 +60,7 @@ public class CatchAndReleasePlugin extends Plugin
 	private volatile boolean renameEnabled = true;
 	private volatile boolean leftClickEnabled = true;
 	private volatile boolean hideEnabled = true;
-	private volatile Set<Integer> releaseIds = ReleaseFish.enabledIds(true, true);
+	private volatile Set<Integer> releaseIds = ReleaseFish.enabledIds(true, true, true);
 
 	@Provides
 	CatchAndReleaseConfig provideConfig(ConfigManager configManager)
@@ -168,7 +174,7 @@ public class CatchAndReleasePlugin extends Plugin
 		renameEnabled = config.renameDropToRelease();
 		leftClickEnabled = config.leftClickRelease();
 		hideEnabled = config.hideReleasedFish();
-		releaseIds = ReleaseFish.enabledIds(config.barbarianFish(), config.flyBaitFish());
+		releaseIds = ReleaseFish.enabledIds(config.barbarianFish(), config.flyBaitFish(), config.leechfin());
 	}
 
 	private boolean isInventoryFishDrop(MenuEntry entry)
@@ -198,10 +204,11 @@ public class CatchAndReleasePlugin extends Plugin
 	}
 
 	/**
-	 * Hide the layer when it contains any selected fish. The client draws an
-	 * item pile as one object. Walk from {@code getBottom()} through
-	 * {@code getPrevious()}, which is the pile order {@code Tile#getGroundItems}
-	 * uses.
+	 * The client draws a ground pile as one object, from whichever of the three
+	 * slots are filled. A brand-new pile puts its only item in {@code getTop()}
+	 * and leaves bottom and middle empty, so the decision has to read all three
+	 * on this draw. Same slots Hide Ground Items checks (vahnx, BSD, plugin-hub
+	 * commit 990adbe43bc725587eebcdd4cc4678f06fdc0b44).
 	 */
 	private boolean shouldDrawObject(TileObject object)
 	{
@@ -209,16 +216,33 @@ public class CatchAndReleasePlugin extends Plugin
 		{
 			return true;
 		}
-		Set<Integer> ids = releaseIds;
-		Node node = ((ItemLayer) object).getBottom();
-		while (node instanceof TileItem)
+		ItemLayer layer = (ItemLayer) object;
+		return !ReleaseFish.pileContainsEnabledFish(
+			releaseIds,
+			itemId(layer.getBottom()),
+			itemId(layer.getMiddle()),
+			itemId(layer.getTop()));
+	}
+
+	/**
+	 * Tile items that are submitted as entities, rather than as a pile, use the
+	 * same id check. Inventory icons are not tile items.
+	 */
+	private boolean shouldDrawRenderable(Renderable renderable)
+	{
+		if (!hideEnabled || !(renderable instanceof TileItem))
 		{
-			if (ids.contains(((TileItem) node).getId()))
-			{
-				return false;
-			}
-			node = node.getPrevious();
+			return true;
 		}
-		return true;
+		return !releaseIds.contains(((TileItem) renderable).getId());
+	}
+
+	private static Integer itemId(Renderable renderable)
+	{
+		if (!(renderable instanceof TileItem))
+		{
+			return null;
+		}
+		return ((TileItem) renderable).getId();
 	}
 }

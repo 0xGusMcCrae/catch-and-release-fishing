@@ -32,10 +32,18 @@ public class ReleaseFishTest
 	}
 
 	@Test
+	public void leechfinUsesTheGamevalItemId()
+	{
+		Assert.assertTrue(ReleaseFish.LEECHFIN_FISH.contains(ItemID.LEECHFIN));
+		Assert.assertEquals(33621, ItemID.LEECHFIN);
+		Assert.assertFalse(ReleaseFish.LEECHFIN_FISH.contains(ItemID.BLOOD_SAC));
+	}
+
+	@Test
 	public void cookedRoeShrimpAndBurntFishAreNotReleasable()
 	{
 		Assert.assertTrue(Collections.disjoint(
-			ReleaseFish.enabledIds(true, true),
+			ReleaseFish.enabledIds(true, true, true),
 			Arrays.asList(
 				ItemID.TROUT,
 				ItemID.SALMON,
@@ -53,7 +61,8 @@ public class ReleaseFishTest
 				ItemID.SHRIMP,
 				ItemID.RAW_LOBSTER,
 				ItemID.BRUT_FISHING_ROD,
-				ItemID.COINS
+				ItemID.COINS,
+				ItemID.BLOOD_SAC
 			)));
 	}
 
@@ -61,44 +70,70 @@ public class ReleaseFishTest
 	public void categoriesDoNotOverlap()
 	{
 		Assert.assertTrue(Collections.disjoint(ReleaseFish.BARBARIAN_FISH, ReleaseFish.FLY_BAIT_FISH));
+		Assert.assertTrue(Collections.disjoint(ReleaseFish.BARBARIAN_FISH, ReleaseFish.LEECHFIN_FISH));
+		Assert.assertTrue(Collections.disjoint(ReleaseFish.FLY_BAIT_FISH, ReleaseFish.LEECHFIN_FISH));
 	}
 
 	@Test
 	public void enabledIdsFollowTheCategoryToggles()
 	{
-		Set<Integer> both = ReleaseFish.enabledIds(true, true);
-		Set<Integer> barbarian = ReleaseFish.enabledIds(true, false);
-		Set<Integer> flyBait = ReleaseFish.enabledIds(false, true);
-		Set<Integer> none = ReleaseFish.enabledIds(false, false);
+		Set<Integer> all = ReleaseFish.enabledIds(true, true, true);
+		Set<Integer> barbarian = ReleaseFish.enabledIds(true, false, false);
+		Set<Integer> flyBait = ReleaseFish.enabledIds(false, true, false);
+		Set<Integer> leechfin = ReleaseFish.enabledIds(false, false, true);
+		Set<Integer> none = ReleaseFish.enabledIds(false, false, false);
 
-		Assert.assertTrue(both.contains(ItemID.RAW_TROUT));
-		Assert.assertTrue(both.contains(ItemID.BRUT_STURGEON));
-		Assert.assertTrue(both.contains(ItemID.MORT_SLIMEY_EEL));
-		Assert.assertTrue(both.contains(ItemID.RAW_CAVE_EEL));
+		Assert.assertTrue(all.contains(ItemID.RAW_TROUT));
+		Assert.assertTrue(all.contains(ItemID.BRUT_STURGEON));
+		Assert.assertTrue(all.contains(ItemID.MORT_SLIMEY_EEL));
+		Assert.assertTrue(all.contains(ItemID.RAW_CAVE_EEL));
+		Assert.assertTrue(all.contains(ItemID.LEECHFIN));
 
 		Assert.assertTrue(flyBait.contains(ItemID.RAW_TROUT));
 		Assert.assertFalse(flyBait.contains(ItemID.BRUT_SPAWNING_TROUT));
+		Assert.assertFalse(flyBait.contains(ItemID.LEECHFIN));
 		Assert.assertTrue(barbarian.contains(ItemID.BRUT_SPAWNING_SALMON));
 		Assert.assertFalse(barbarian.contains(ItemID.RAW_TROUT));
 		Assert.assertFalse(barbarian.contains(ItemID.RAW_CAVE_EEL));
+		Assert.assertFalse(barbarian.contains(ItemID.LEECHFIN));
+		Assert.assertTrue(leechfin.contains(ItemID.LEECHFIN));
+		Assert.assertFalse(leechfin.contains(ItemID.RAW_TROUT));
+		Assert.assertFalse(leechfin.contains(ItemID.BRUT_STURGEON));
 
 		Assert.assertTrue(none.isEmpty());
-		Assert.assertTrue(Collections.disjoint(none, both));
+		Assert.assertTrue(Collections.disjoint(none, all));
 	}
 
 	@Test
 	public void onlyDropOnAnEnabledFishIsRelease()
 	{
-		Set<Integer> ids = ReleaseFish.enabledIds(true, true);
+		Set<Integer> ids = ReleaseFish.enabledIds(true, true, true);
 		Assert.assertTrue(isRelease(ReleaseFish.DROP_OPTION, ItemID.RAW_TROUT, ids));
 		Assert.assertTrue(isRelease(ReleaseFish.DROP_OPTION, ItemID.BRUT_SPAWNING_SALMON, ids));
-		Assert.assertTrue(isRelease(ReleaseFish.DROP_OPTION, ItemID.RAW_CAVE_EEL, ReleaseFish.enabledIds(false, true)));
+		Assert.assertTrue(isRelease(ReleaseFish.DROP_OPTION, ItemID.RAW_CAVE_EEL, ReleaseFish.enabledIds(false, true, false)));
+		Assert.assertTrue(isRelease(ReleaseFish.DROP_OPTION, ItemID.LEECHFIN, ReleaseFish.enabledIds(false, false, true)));
 
 		Assert.assertFalse(isRelease("Use", ItemID.RAW_SALMON, ids));
 		Assert.assertFalse(isRelease(ReleaseFish.DROP_OPTION, ItemID.TROUT, ids));
-		Assert.assertFalse(isRelease(ReleaseFish.DROP_OPTION, ItemID.RAW_TROUT, ReleaseFish.enabledIds(true, false)));
-		Assert.assertFalse(isRelease(ReleaseFish.DROP_OPTION, ItemID.BRUT_STURGEON, ReleaseFish.enabledIds(false, true)));
+		Assert.assertFalse(isRelease(ReleaseFish.DROP_OPTION, ItemID.RAW_TROUT, ReleaseFish.enabledIds(true, false, false)));
+		Assert.assertFalse(isRelease(ReleaseFish.DROP_OPTION, ItemID.BRUT_STURGEON, ReleaseFish.enabledIds(false, true, false)));
+		Assert.assertFalse(isRelease(ReleaseFish.DROP_OPTION, ItemID.LEECHFIN, ReleaseFish.enabledIds(true, true, false)));
 		Assert.assertFalse(isRelease(null, ItemID.RAW_TROUT, ids));
+	}
+
+	@Test
+	public void aNewPileWithOnlyTheTopSlotFilledIsHidden()
+	{
+		Set<Integer> ids = ReleaseFish.enabledIds(true, true, true);
+		Assert.assertTrue(ReleaseFish.pileContainsEnabledFish(ids, null, null, ItemID.RAW_TROUT));
+		Assert.assertTrue(ReleaseFish.pileContainsEnabledFish(ids, null, null, ItemID.LEECHFIN));
+		Assert.assertTrue(ReleaseFish.pileContainsEnabledFish(ids, ItemID.BRUT_STURGEON, null, null));
+		Assert.assertTrue(ReleaseFish.pileContainsEnabledFish(ids, null, ItemID.RAW_SALMON, ItemID.COINS));
+
+		Assert.assertFalse(ReleaseFish.pileContainsEnabledFish(ids, null, null, null));
+		Assert.assertFalse(ReleaseFish.pileContainsEnabledFish(ids, ItemID.COINS, ItemID.TROUT, ItemID.BLOOD_SAC));
+		Assert.assertFalse(ReleaseFish.pileContainsEnabledFish(ReleaseFish.enabledIds(false, false, false), null, null, ItemID.RAW_TROUT));
+		Assert.assertFalse(ReleaseFish.pileContainsEnabledFish(ReleaseFish.enabledIds(true, true, false), null, null, ItemID.LEECHFIN));
 	}
 
 	private static boolean isRelease(String option, int itemId, Set<Integer> enabledIds)

@@ -73,4 +73,16 @@ public interface CatchAndReleaseConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigItem(
+		keyName = "leechfin",
+		name = "Leechfin",
+		description = "Leechfin, caught with a big fishing net from river spots in Vampyrium.",
+		section = fishSection,
+		position = 2
+	)
+	default boolean leechfin()
+	{
+		return true;
+	}
 }

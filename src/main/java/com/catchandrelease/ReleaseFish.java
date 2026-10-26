@@ -11,7 +11,7 @@ import net.runelite.api.gameval.ItemID;
  * as ground items. Gameval names do not always match the name in game:
  * {@code BRUT_SPAWNING_TROUT} is leaping trout, {@code BRUT_STURGEON} is
  * leaping sturgeon, {@code HUNTING_RAW_FISH_SPECIAL} is raw rainbow fish,
- * and {@code MORT_SLIMEY_EEL} is raw slimy eel.
+ * {@code MORT_SLIMEY_EEL} is raw slimy eel, and {@code LEECHFIN} is leechfin.
  */
 public final class ReleaseFish
 {
@@ -35,13 +35,22 @@ public final class ReleaseFish
 		ItemID.RAW_CAVE_EEL
 	);
 
+	/**
+	 * Big-net river fish. {@code LEECHFIN} is the caught item (id 33621); there
+	 * is no separate raw or cooked id.
+	 */
+	public static final Set<Integer> LEECHFIN_FISH = Set.of(
+		ItemID.LEECHFIN
+	);
+
 	private static final Set<Integer> ALL_FISH;
 
 	static
 	{
-		Set<Integer> all = new HashSet<>(BARBARIAN_FISH.size() + FLY_BAIT_FISH.size());
+		Set<Integer> all = new HashSet<>(BARBARIAN_FISH.size() + FLY_BAIT_FISH.size() + LEECHFIN_FISH.size());
 		all.addAll(BARBARIAN_FISH);
 		all.addAll(FLY_BAIT_FISH);
+		all.addAll(LEECHFIN_FISH);
 		ALL_FISH = Collections.unmodifiableSet(all);
 	}
 
@@ -52,21 +61,58 @@ public final class ReleaseFish
 	/**
 	 * Ids the current category toggles apply to. The returned set is immutable.
 	 */
-	public static Set<Integer> enabledIds(boolean barbarian, boolean flyBait)
+	public static Set<Integer> enabledIds(boolean barbarian, boolean flyBait, boolean leechfin)
 	{
-		if (barbarian && flyBait)
+		if (barbarian && flyBait && leechfin)
 		{
 			return ALL_FISH;
 		}
-		if (barbarian)
+		if (!barbarian && !flyBait && !leechfin)
+		{
+			return Collections.emptySet();
+		}
+		if (barbarian && !flyBait && !leechfin)
 		{
 			return BARBARIAN_FISH;
 		}
-		if (flyBait)
+		if (!barbarian && flyBait && !leechfin)
 		{
 			return FLY_BAIT_FISH;
 		}
-		return Collections.emptySet();
+		if (!barbarian && !flyBait)
+		{
+			return LEECHFIN_FISH;
+		}
+
+		Set<Integer> ids = new HashSet<>();
+		if (barbarian)
+		{
+			ids.addAll(BARBARIAN_FISH);
+		}
+		if (flyBait)
+		{
+			ids.addAll(FLY_BAIT_FISH);
+		}
+		if (leechfin)
+		{
+			ids.addAll(LEECHFIN_FISH);
+		}
+		return Collections.unmodifiableSet(ids);
+	}
+
+	/**
+	 * A ground pile draws at most three models: bottom, middle, and top. A new
+	 * pile's only item is the top slot; the other two are null until more items
+	 * are chosen. Null means that slot is empty.
+	 */
+	public static boolean pileContainsEnabledFish(Set<Integer> enabled, Integer bottom, Integer middle, Integer top)
+	{
+		return contains(enabled, bottom) || contains(enabled, middle) || contains(enabled, top);
+	}
+
+	private static boolean contains(Set<Integer> enabled, Integer itemId)
+	{
+		return itemId != null && enabled.contains(itemId);
 	}
 
 	/**
