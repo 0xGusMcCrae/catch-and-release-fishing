@@ -13,7 +13,7 @@ public interface CatchAndReleaseConfig extends Config
 	@ConfigItem(
 		keyName = "renameDrop",
 		name = "Release instead of Drop",
-		description = "While fly, bait, or barbarian fishing, and for about a minute afterwards, the inventory Drop option on matching fish is shown as Release. Clicking it still drops the fish.",
+		description = "The inventory Drop option on matching fish is shown as Release. Clicking it still drops the fish.",
 		position = 0
 	)
 	default boolean renameDropToRelease()
@@ -24,7 +24,7 @@ public interface CatchAndReleaseConfig extends Config
 	@ConfigItem(
 		keyName = "hideGroundFish",
 		name = "Hide fish on the ground",
-		description = "Stop drawing ground piles made only of the selected fish. A pile that also contains another item stays visible, because the client draws a whole pile together.",
+		description = "Do not draw these fish when they are on the ground, on any tile.",
 		position = 1
 	)
 	default boolean hideReleasedFish()
@@ -54,7 +54,7 @@ public interface CatchAndReleaseConfig extends Config
 	@ConfigItem(
 		keyName = "flyBait",
 		name = "Fly and bait fish",
-		description = "Raw trout, raw salmon, raw pike, raw sardine, raw herring, and raw rainbow fish.",
+		description = "Raw trout, raw salmon, raw pike, raw sardine, raw herring, raw rainbow fish, raw slimy eel, and raw cave eel.",
 		section = fishSection,
 		position = 1
 	)
