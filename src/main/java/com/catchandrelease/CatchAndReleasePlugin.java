@@ -116,8 +116,8 @@ public class CatchAndReleasePlugin extends Plugin
 
 	/**
 	 * Runs after the usual left-click swaps, which still see the option as Drop.
-	 * The label is changed here, and Release is moved to the top only when it is
-	 * not already the left-click option.
+	 * The label changes only when Release is enabled. Left-click promotion is
+	 * separate, so Drop can stay the left-click word when the rename is off.
 	 */
 	@Subscribe(priority = -1)
 	public void onPostMenuSort(PostMenuSort event)
@@ -137,7 +137,11 @@ public class CatchAndReleasePlugin extends Plugin
 			{
 				continue;
 			}
-			entry.setOption(ReleaseFish.RELEASE_OPTION);
+			String shown = ReleaseFish.inventoryDropLabel(renameEnabled, Text.removeTags(entry.getOption()));
+			if (!shown.equals(Text.removeTags(entry.getOption())))
+			{
+				entry.setOption(shown);
+			}
 			dropIndex = i;
 		}
 		if (!leftClickEnabled || dropIndex == -1)

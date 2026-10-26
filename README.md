@@ -38,8 +38,4 @@ Java 11 or newer.
 
 ## Bolt
 
-```sh
-./gradlew shadowJar
-```
-
-Point Bolt's custom RuneLite JAR at `build/libs/catch-and-release-fishing-1.0-SNAPSHOT-all.jar`. Bolt runs `java -Duser.home=<Bolt data> -jar <jar> -J-Duser.home=<Bolt data>`. The dev client drops that `-J` argument (and other launcher-only options such as `--configure`) and, when assertions are off, starts itself again with `-ea`. You do not need `JAVA_TOOL_OPTIONS=-ea`. `--developer-mode` and `--debug` are still passed through.
+`./gradlew shadowJar` writes `build/libs/catch-and-release-fishing-1.0-SNAPSHOT-all.jar` for a custom RuneLite JAR. The dev client drops Bolt's `-J` launcher arguments and turns assertions on itself.

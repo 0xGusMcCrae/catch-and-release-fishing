@@ -18,6 +18,23 @@ public final class ReleaseFish
 	public static final String DROP_OPTION = "Drop";
 	public static final String RELEASE_OPTION = "Release";
 
+	/**
+	 * Inventory label for a configured fish. Left-click promotion does not
+	 * rename: with the Release toggle off, the option stays Drop.
+	 */
+	public static String inventoryDropLabel(boolean renameEnabled, String option)
+	{
+		if (renameEnabled)
+		{
+			return RELEASE_OPTION;
+		}
+		if (RELEASE_OPTION.equals(option))
+		{
+			return DROP_OPTION;
+		}
+		return option;
+	}
+
 	public static final Set<Integer> BARBARIAN_FISH = Set.of(
 		ItemID.BRUT_SPAWNING_TROUT,
 		ItemID.BRUT_SPAWNING_SALMON,

@@ -136,6 +136,16 @@ public class ReleaseFishTest
 		Assert.assertFalse(ReleaseFish.pileContainsEnabledFish(ReleaseFish.enabledIds(true, true, false), null, null, ItemID.LEECHFIN));
 	}
 
+	@Test
+	public void leftClickDoesNotRenameWhenReleaseToggleIsOff()
+	{
+		Assert.assertEquals(ReleaseFish.DROP_OPTION, ReleaseFish.inventoryDropLabel(false, ReleaseFish.DROP_OPTION));
+		Assert.assertEquals(ReleaseFish.DROP_OPTION, ReleaseFish.inventoryDropLabel(false, ReleaseFish.RELEASE_OPTION));
+		Assert.assertEquals(ReleaseFish.RELEASE_OPTION, ReleaseFish.inventoryDropLabel(true, ReleaseFish.DROP_OPTION));
+		Assert.assertEquals(ReleaseFish.RELEASE_OPTION, ReleaseFish.inventoryDropLabel(true, ReleaseFish.RELEASE_OPTION));
+		Assert.assertEquals("Use", ReleaseFish.inventoryDropLabel(false, "Use"));
+	}
+
 	private static boolean isRelease(String option, int itemId, Set<Integer> enabledIds)
 	{
 		return ReleaseFish.DROP_OPTION.equals(option) && enabledIds.contains(itemId);
