@@ -206,9 +206,8 @@ public class CatchAndReleasePlugin extends Plugin
 	/**
 	 * The client draws a ground pile as one object, from whichever of the three
 	 * slots are filled. A brand-new pile puts its only item in {@code getTop()}
-	 * and leaves bottom and middle empty, so the decision has to read all three
-	 * on this draw. Same slots Hide Ground Items checks (vahnx, BSD, plugin-hub
-	 * commit 990adbe43bc725587eebcdd4cc4678f06fdc0b44).
+	 * and leaves bottom and middle empty, so this draw has to read all three.
+	 * The README names the plugin that was read for that approach.
 	 */
 	private boolean shouldDrawObject(TileObject object)
 	{
