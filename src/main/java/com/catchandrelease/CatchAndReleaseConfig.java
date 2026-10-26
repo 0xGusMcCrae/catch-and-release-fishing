@@ -1,0 +1,65 @@
+package com.catchandrelease;
+
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
+
+@ConfigGroup(CatchAndReleaseConfig.GROUP)
+public interface CatchAndReleaseConfig extends Config
+{
+	String GROUP = "catchandreleasefishing";
+
+	@ConfigItem(
+		keyName = "renameDrop",
+		name = "Release instead of Drop",
+		description = "While fly, bait, or barbarian fishing, and for about a minute afterwards, the inventory Drop option on matching fish is shown as Release. Clicking it still drops the fish.",
+		position = 0
+	)
+	default boolean renameDropToRelease()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "hideGroundFish",
+		name = "Hide fish on the ground",
+		description = "Stop drawing ground piles made only of the selected fish. A pile that also contains another item stays visible, because the client draws a whole pile together.",
+		position = 1
+	)
+	default boolean hideReleasedFish()
+	{
+		return true;
+	}
+
+	@ConfigSection(
+		name = "Fish",
+		description = "Which catches Release and ground hiding apply to",
+		position = 2
+	)
+	String fishSection = "fish";
+
+	@ConfigItem(
+		keyName = "barbarian",
+		name = "Barbarian fish",
+		description = "Leaping trout, leaping salmon, and leaping sturgeon.",
+		section = fishSection,
+		position = 0
+	)
+	default boolean barbarianFish()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "flyBait",
+		name = "Fly and bait fish",
+		description = "Raw trout, raw salmon, raw pike, raw sardine, raw herring, and raw rainbow fish.",
+		section = fishSection,
+		position = 1
+	)
+	default boolean flyBaitFish()
+	{
+		return true;
+	}
+}
