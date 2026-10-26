@@ -3,6 +3,7 @@ package com.catchandrelease;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import net.runelite.api.MenuAction;
 import net.runelite.api.gameval.ItemID;
 import org.junit.Assert;
 import org.junit.Test;
@@ -103,5 +104,18 @@ public class ReleaseFishTest
 	private static boolean isRelease(String option, int itemId, Set<Integer> enabledIds)
 	{
 		return ReleaseFish.DROP_OPTION.equals(option) && enabledIds.contains(itemId);
+	}
+
+	@Test
+	public void groundMenusForTheseFishAreTheOnesThatGetHidden()
+	{
+		Assert.assertTrue(ReleaseFish.isGroundMenuAction(MenuAction.GROUND_ITEM_FIRST_OPTION));
+		Assert.assertTrue(ReleaseFish.isGroundMenuAction(MenuAction.GROUND_ITEM_FIFTH_OPTION));
+		Assert.assertTrue(ReleaseFish.isGroundMenuAction(MenuAction.EXAMINE_ITEM_GROUND));
+		Assert.assertTrue(ReleaseFish.isGroundMenuAction(MenuAction.WIDGET_TARGET_ON_GROUND_ITEM));
+		Assert.assertFalse(ReleaseFish.isGroundMenuAction(MenuAction.WALK));
+		Assert.assertFalse(ReleaseFish.isGroundMenuAction(MenuAction.CC_OP));
+		Assert.assertFalse(ReleaseFish.isGroundMenuAction(MenuAction.EXAMINE_NPC));
+		Assert.assertFalse(ReleaseFish.isGroundMenuAction(MenuAction.CANCEL));
 	}
 }

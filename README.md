@@ -1,6 +1,6 @@
 # Catch and Release Fishing
 
-RuneLite plugin that renames inventory **Drop** to **Release** on selected fish, and hides those fish as ground items. Release still drops the item. Shift-click drop uses that same Drop entry, so the left-click tooltip says Release as well.
+RuneLite plugin that renames inventory **Drop** to **Release** on selected fish, and hides those fish as ground items. Release still drops the item. Left-click on a configured fish is Release. Shift-click drop uses that same entry.
 
 ## Fish
 
@@ -8,11 +8,12 @@ Barbarian: leaping trout, leaping salmon, leaping sturgeon.
 
 Fly and bait: raw trout, raw salmon, raw pike, raw sardine, raw herring, raw rainbow fish, raw slimy eel, raw cave eel.
 
-Cooked fish, burnt fish, roe, and caviar are not included. A ground pile that contains one of these fish is not drawn, on any tile, including fish other players dropped.
+Cooked fish, burnt fish, roe, and caviar are not included. A ground pile that contains one of these fish is not drawn, and that fish has no Take, Examine, or mouseover option, on any tile, including fish other players dropped.
 
 ## Config
 
 - Release instead of Drop
+- Left-click Release
 - Hide fish on the ground
 - Barbarian fish
 - Fly and bait fish

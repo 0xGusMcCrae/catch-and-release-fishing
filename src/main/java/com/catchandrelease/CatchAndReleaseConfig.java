@@ -22,10 +22,21 @@ public interface CatchAndReleaseConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "leftClickRelease",
+		name = "Left-click Release",
+		description = "Release is the left-click option on configured fish in the inventory. The click still drops the fish.",
+		position = 1
+	)
+	default boolean leftClickRelease()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "hideGroundFish",
 		name = "Hide fish on the ground",
-		description = "Do not draw these fish when they are on the ground, on any tile.",
-		position = 1
+		description = "Do not draw these fish on the ground, and remove their Take, Examine, and other ground options.",
+		position = 2
 	)
 	default boolean hideReleasedFish()
 	{
@@ -35,7 +46,7 @@ public interface CatchAndReleaseConfig extends Config
 	@ConfigSection(
 		name = "Fish",
 		description = "Which catches Release and ground hiding apply to",
-		position = 2
+		position = 3
 	)
 	String fishSection = "fish";
 

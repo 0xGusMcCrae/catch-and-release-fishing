@@ -3,6 +3,7 @@ package com.catchandrelease;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import net.runelite.api.MenuAction;
 import net.runelite.api.gameval.ItemID;
 
 /**
@@ -66,5 +67,22 @@ public final class ReleaseFish
 			return FLY_BAIT_FISH;
 		}
 		return Collections.emptySet();
+	}
+
+	/**
+	 * Ground-item menu actions. Hiding one of these removes Take, Examine, and
+	 * use-on-item from that fish. Walk here is not one of them.
+	 */
+	@SuppressWarnings("deprecation")
+	public static boolean isGroundMenuAction(MenuAction action)
+	{
+		return action == MenuAction.GROUND_ITEM_FIRST_OPTION
+			|| action == MenuAction.GROUND_ITEM_SECOND_OPTION
+			|| action == MenuAction.GROUND_ITEM_THIRD_OPTION
+			|| action == MenuAction.GROUND_ITEM_FOURTH_OPTION
+			|| action == MenuAction.GROUND_ITEM_FIFTH_OPTION
+			|| action == MenuAction.EXAMINE_ITEM_GROUND
+			|| action == MenuAction.WIDGET_TARGET_ON_GROUND_ITEM
+			|| action == MenuAction.ITEM_USE_ON_GROUND_ITEM;
 	}
 }
