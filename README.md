@@ -26,4 +26,12 @@ Java 11 or newer.
 ./gradlew run
 ```
 
-`build` compiles against the current RuneLite release and runs the item-matching tests. `run` starts a dev client with this plugin loaded (`--developer-mode --debug`). Log in with a Jagex account using the [RuneLite Jagex account guide](https://github.com/runelite/runelite/wiki/Using-Jagex-Accounts).
+`build` compiles against the current RuneLite release and runs the tests. `run` starts a dev client with this plugin loaded (`--developer-mode --debug`). Log in with a Jagex account using the [RuneLite Jagex account guide](https://github.com/runelite/runelite/wiki/Using-Jagex-Accounts).
+
+## Bolt
+
+```sh
+./gradlew shadowJar
+```
+
+Point Bolt's custom RuneLite JAR at `build/libs/catch-and-release-fishing-1.0-SNAPSHOT-all.jar`. Bolt runs `java -Duser.home=<Bolt data> -jar <jar> -J-Duser.home=<Bolt data>`. The dev client drops that `-J` argument (and other launcher-only options such as `--configure`) and, when assertions are off, starts itself again with `-ea`. You do not need `JAVA_TOOL_OPTIONS=-ea`. `--developer-mode` and `--debug` are still passed through.
