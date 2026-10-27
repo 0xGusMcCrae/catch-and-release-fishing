@@ -207,6 +207,7 @@ public class CatchAndReleasePlugin extends Plugin
 		return WidgetUtil.componentToInterface(widgetId) == InterfaceID.INVENTORY;
 	}
 
+	// inspired by RuneLite's Hide Ground Items plugin.
 	/**
 	 * The client draws a ground pile as one object, from whichever of the three
 	 * slots are filled. A brand-new pile puts its only item in {@code getTop()}
